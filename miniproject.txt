@@ -1,0 +1,663 @@
+package miniproject;
+import java.awt.*;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+
+@SuppressWarnings("unchecked")
+
+/**
+ *
+ *
+ */
+
+
+ class DisplayGUI extends JFrame{
+     candidate cand;
+     student stud;
+     s_preference pref;
+     Integer count =0;
+     static int i;
+        private JLabel lblName;
+        private JTextField txtName;
+        private JLabel lblCategory;
+        private JTextField txtCategory;
+        private JLabel lblDOB;
+        private JLabel lblHeader1;
+        private JLabel lblHeader2;
+        private JLabel lblHeader3;
+        private JTextField txtDOB;
+        private JLabel lblRoll;
+        private JTextField txtRoll;
+        private JLabel lblAIR;
+        private JTextField txtAIR;
+        private Font fntFont;
+        JButton btnLogin=new JButton("Login");
+        ButtonHandlerLogin lstnrLogin=new ButtonHandlerLogin();
+        JButton btnReset=new JButton("Reset");
+        ButtonHandlerReset lstnrReset=new ButtonHandlerReset();
+        candidate student;
+        ArrayList<candidate> student_list=new ArrayList();
+        
+    //Constructor which displays a screen
+    DisplayGUI()  {
+         this.setTitle("Central Seat Allocation Board-CSAB 2014");
+         this.setLayout(new FlowLayout());
+         this.setSize(400,400);
+         
+         lblHeader1=new JLabel("CENTRAL BOARD OF SECONDARY EDUCATION");
+         this.add(lblHeader1);
+         lblHeader1.setForeground(Color.BLUE);
+         
+         lblHeader2=new JLabel("JEE APEX BOARD SECRETARIAT");
+         this.add(lblHeader2);
+         lblHeader2.setForeground(Color.BLUE);
+         
+         lblHeader3=new JLabel("JOINT ENTRANCE EXAMINATION-2014 RESULT");
+         this.add(lblHeader3);
+         lblHeader3.setForeground(Color.BLUE);
+         
+         lblRoll=new JLabel("Enter your roll number");
+         this.add(lblRoll);
+         txtRoll=new JTextField(10);
+         this.add(txtRoll);
+         
+         lblDOB=new JLabel("Enter your date of birth(dd/mm/yyyy)");
+         this.add(lblDOB);
+         txtDOB=new JTextField(10);
+         this.add(txtDOB);
+         
+         
+         this.btnLogin.addActionListener(lstnrLogin);
+         this.add(btnLogin);
+         this.btnReset.addActionListener(lstnrReset);
+         this.add(btnReset);
+         this.setVisible(true);
+         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         
+    }
+    
+    private class ButtonHandlerLogin implements ActionListener{
+        int x=1;
+        JFrame frame;
+        @Override
+        
+        public void actionPerformed(ActionEvent e){
+            if(txtDOB.getText().equals("") && txtRoll.getText().equals("")){
+                JOptionPane.showMessageDialog(frame, "Please enter roll number and date of birth.");
+   }
+            else if(txtDOB.getText().equals("")) {
+                JOptionPane.showMessageDialog(frame, "Please enter date of birth.");
+            }
+            else if(txtRoll.getText().equals("")){
+                JOptionPane.showMessageDialog(frame, "Please enter roll number.");
+            }
+            else{
+         if(x==1){
+             
+             try {
+                 new FrmMain().setVisible(true);
+                 
+             } catch (IOException ex) {
+                 Logger.getLogger(DisplayGUI.class.getName()).log(Level.SEVERE, null, ex);
+             } catch (ClassNotFoundException ex) {
+                 Logger.getLogger(DisplayGUI.class.getName()).log(Level.SEVERE, null, ex);
+             }
+         }
+        }
+        }
+    }
+    
+    
+     private class ButtonHandlerReset implements ActionListener{
+        
+        @Override
+        
+        public void actionPerformed(ActionEvent e){
+           txtDOB.setText("");
+           txtRoll.setText("");
+        }
+    }
+    
+    public class FrmMain extends JFrame{
+        
+         private JLabel lblName;
+         private JLabel lblStudentName;
+         private JLabel lblAIR;
+         private JLabel lblStudentAIR;
+         private JLabel lblDOB;
+         private JLabel lblStudentDOB;
+         private JLabel lblroll;
+         private JLabel lblStudentRoll;
+         private JLabel lblConfMessage;
+         private JLabel lblConfStatus;
+         
+        JButton btnProceed=new JButton("Proceed to counselling or Exit");
+        ButtonHandlerProceed lstnrProceed=new ButtonHandlerProceed();
+         FrmMain() throws FileNotFoundException, IOException, ClassNotFoundException{
+           FileInputStream file;
+           ObjectInputStream input=null; 
+           
+           
+          try{
+              JFrame frame=null;
+              
+              file=new FileInputStream("mini.txt");
+              input=new ObjectInputStream(file); 
+              int i=0;
+              while((cand=(candidate)input.readObject())!=null){
+              int filerno=cand.getC_rollno();
+              String strfrno=""+filerno;
+              if(filerno == 0 ? txtRoll.getText() == null : strfrno.equals(txtRoll.getText())){
+                  i=1;
+                  break;
+              }
+              else if(i==0){
+                  JOptionPane.showMessageDialog(frame,"Invalid credentials. Click OK");
+                  txtRoll.setText("");
+                  txtDOB.setText("");
+              }
+              //i++;
+              
+          }
+          }
+          catch(IOException ex){
+            System.out.println("File Read Error");
+            ex.printStackTrace();
+          }
+             
+         this.setTitle("See your details here!");
+         this.setLayout(new FlowLayout());
+         this.setSize(265,600);
+             
+         lblName=new JLabel("Name:");
+         this.add(lblName);
+         lblName.setFont (lblName.getFont ().deriveFont (42.0f));
+         lblName.setForeground(Color.GREEN);
+         
+         lblStudentName=new JLabel(retrieveName().toString());
+         this.add(lblStudentName);
+         lblStudentName.setFont (lblStudentName.getFont ().deriveFont (42.0f));
+         
+         lblAIR=new JLabel("AIR:");
+         this.add(lblAIR);
+         lblAIR.setForeground(Color.GREEN);
+         lblAIR.setFont (lblAIR.getFont ().deriveFont (42.0f));
+         
+         Integer getAIR=retrieveAIR();
+         String getSAIR=""+getAIR;
+         lblStudentAIR=new JLabel(getSAIR);
+         this.add(lblStudentAIR);
+         lblStudentAIR.setFont (lblStudentAIR.getFont ().deriveFont (42.0f));
+         
+         lblDOB=new JLabel("DOB:");
+         this.add(lblDOB);
+         lblDOB.setForeground(Color.GREEN);
+         lblDOB.setFont (lblDOB.getFont ().deriveFont (42.0f));
+         
+         lblStudentDOB=new JLabel(retrieveDOB());
+         this.add(lblStudentDOB);
+         lblStudentDOB.setFont (lblStudentDOB.getFont ().deriveFont (42.0f));
+         
+         lblroll=new JLabel("Roll:");
+         this.add(lblroll);
+         lblroll.setFont (lblroll.getFont ().deriveFont (42.0f));
+         lblroll.setForeground(Color.GREEN);
+         
+         lblStudentRoll=new JLabel(retrieveRoll());
+         this.add(lblStudentRoll);
+         lblStudentRoll.setFont (lblStudentRoll.getFont ().deriveFont (42.0f));
+         
+         lblConfMessage=new JLabel("Whether eligible for counselling?");
+         this.add(lblConfMessage);
+         
+         lblConfStatus=new JLabel(retrieveStatus());
+         this.add(lblConfStatus);
+         
+         this.btnProceed.addActionListener(lstnrProceed);
+         this.add(btnProceed);
+        
+         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         }
+         
+         private class ButtonHandlerProceed implements ActionListener{
+             JFrame frame;
+          @Override
+        
+           public void actionPerformed(ActionEvent e){
+                if("Yes".equals(retrieveStatus())){
+                   
+            new FrmPref().setVisible(true);
+          }
+                else{
+                    JOptionPane.showMessageDialog(frame, "You are not eligible for counselling. Please click OK.");
+                    System.exit(0);
+                }
+           
+        }
+         }
+         String retrieveName(){
+             return cand.getC_name();
+         }
+         
+         int retrieveAIR(){
+             return cand.getC_air();
+         }
+         
+         String retrieveDOB(){
+             return cand.getC_DOB();
+         }
+         String retrieveRoll(){
+             int rollnumber=cand.getC_rollno();
+             String rnumstr=""+rollnumber;
+             return rnumstr;
+         }
+         String retrieveStatus(){
+             if(cand.getC_air()<=300){
+                 return "Yes";
+             }
+             else
+                 return "No";
+         }
+        
+    }
+      
+    public class FrmPref extends JFrame{
+     String[] collegeName={"National Institute of Technology,Tiruchirapalli","National Institute of Technology,Warangal","National Institute of Technology,Surathkal","National Institute of Technology,Calicut","Motilal National Institute of Technology,Allahabad"};
+     String[] branchName={"Electrical and Electronics Engineering","Information Technology","Mechanical Engineering"};
+     String[] prefNum={"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"};
+     
+    
+     private JLabel lblCollegeName;
+     private JLabel lblBranchName;
+     private JLabel lblPrefNum;
+     JButton btnAdd=new JButton("Add to preference list");
+     ButtonHandlerAdd lstnrAdd=new ButtonHandlerAdd();
+     JButton btnDelete=new JButton("Delete latest preference");
+     ButtonHandlerDelete lstnrDelete=new ButtonHandlerDelete();
+     JButton btnLock=new JButton("Lock your choices");
+     ButtonHandlerLock lstnrLock=new ButtonHandlerLock();
+     private JComboBox collegeList=new JComboBox(collegeName);
+     private JComboBox branchList=new JComboBox(branchName);
+     private JComboBox prefList=new JComboBox(prefNum);
+     JList prefarr;
+     DefaultListModel preflistGUI=new DefaultListModel();
+     FrmPref(){
+          stud.setC_rollno(cand.getC_rollno());
+          stud.setC_air(cand.getC_air());
+          stud.setC_dob(cand.getC_DOB());
+          stud.setC_name(cand.getC_name());
+                  
+         
+         this.setTitle("Choose your preferences here!");
+         this.setLayout(new FlowLayout());
+         this.setSize(500,500);
+           
+         lblCollegeName=new JLabel("Name of College:");
+         this.add(lblCollegeName);
+         lblCollegeName.setFont (lblCollegeName.getFont ().deriveFont (42.0f));
+         lblCollegeName.setForeground(Color.BLUE);
+         
+         this.add(collegeList);
+         
+         lblBranchName=new JLabel("Name of Branch:");
+         this.add(lblBranchName);
+         lblBranchName.setFont (lblBranchName.getFont ().deriveFont (42.0f));
+         lblBranchName.setForeground(Color.BLUE);
+         
+         this.add(branchList);
+         
+         
+         this.btnAdd.addActionListener(lstnrAdd);
+         this.add(btnAdd);
+         
+         this.btnDelete.addActionListener(lstnrDelete);
+         this.add(btnDelete);
+         
+         prefarr=new JList(preflistGUI);
+         this.add(prefarr);
+         prefarr.setVisibleRowCount(5);
+         
+     }
+     
+       private class ButtonHandlerAdd implements ActionListener{
+             JFrame frame;
+             String collist="",branchlist="",preflist="";
+          @Override
+        
+           public void actionPerformed(ActionEvent e){
+               String collist = null,branchlist = null,preflist = null;
+           if(collegeList.getSelectedItem()!=null){
+                collist=collegeList.getSelectedItem().toString();
+           }     
+           if(branchList.getSelectedItem()!=null){
+                branchlist=branchList.getSelectedItem().toString();
+           } 
+            
+               // pref.prefno=0;
+                
+                
+                pref.prefno=i;
+                pref.col_name=collist;
+                pref.branch_name=branchlist;
+                i++;
+                stud.s_pref.add(pref);
+                
+                pref.setcol_name(collist);
+                pref.setbranch_name(branchlist);
+                preflistGUI.addElement(pref);
+                
+           }
+                
+           
+        }
+       
+        private class ButtonHandlerDelete implements ActionListener{
+             JFrame frame;
+          @Override
+        
+           public void actionPerformed(ActionEvent e){
+               int j=i-1;
+                stud.s_pref.remove(--i);
+                preflistGUI.removeElementAt(j);
+           }
+                
+           
+        }
+        
+    class s_air implements Comparator <student>{
+       
+    @Override
+    public int compare(student stud1,student stud2) {
+        if(stud1.getC_air()> stud2.getC_air())
+           return 1;
+       else if(stud1.getC_air()< stud2.getC_air())
+           return -1;
+       else
+           return 0;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}
+        s_air s_comp=new s_air();
+        void processor() throws ClassNotFoundException{
+            student s_obj;
+            ArrayList<student> s_list=new ArrayList();
+           FileInputStream file;
+           ObjectInputStream input=null; 
+           
+           
+          try{
+              JFrame frame=null;
+              
+              file=new FileInputStream("mini1.dat");
+              input=new ObjectInputStream(file); 
+              while((s_obj=(student)input.readObject())!=null){
+                  s_list.add(s_obj);
+              }
+              
+              Collections.sort(s_list, s_comp);
+          }
+          
+          catch(IOException ex){
+            System.out.println("File Read Error");
+            ex.printStackTrace();
+          }
+         round r_round = new round();
+         int rcount=0;
+         String college,branch;
+                 Integer preference;
+                 Integer check=r_round.v_list[rcount].getSeatsFilled();
+         while(rcount <= s_list.size()){
+           college= s_list.get(rcount).s_pref.get(rcount).col_name;
+           branch= s_list.get(rcount).s_pref.get(rcount).branch_name;
+           for(rcount=0;rcount<15;rcount++){
+           if(r_round.v_list[rcount].col_name.equals(college) && r_round.v_list[rcount].branch_name.equals(branch)){
+               if(check<20){
+                   preference=s_list.get(rcount).s_pref.get(rcount).prefno;
+                   preference=s_list.get(rcount).alprefnum;
+                   check++;
+               }
+           }
+         }
+         }
+        
+    }
+        private class ButtonHandlerLock implements ActionListener{
+             JFrame frame;
+          @Override
+        
+           public void actionPerformed(ActionEvent e){
+               int res = JOptionPane.showOptionDialog(frame, "If you want to lock, click OK", "or to exit close the window ", JOptionPane.DEFAULT_OPTION,
+                 JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+               if(res==0){
+                   i=0;
+              FileOutputStream file;
+              ObjectOutputStream output=null;
+             
+      try{
+          
+          file=new FileOutputStream("mini1.dat", true);
+          output=new ObjectOutputStream(file);
+          
+              if(count<=320){
+              output.writeObject(stud);
+              count++;
+              }
+              else{
+                   JFrame frame=null;
+                   JOptionPane.showMessageDialog(frame,"Choice filling is closed!");
+                   
+                   FrmPref.this.dispose();
+                   processor();
+                  //Collections.sort(cust_arrlist,comp);
+              }
+      }
+      catch(IOException ex){
+          System.out.println("File Write Error");
+          ex.printStackTrace();
+      }            catch (ClassNotFoundException ex) {
+                       Logger.getLogger(DisplayGUI.class.getName()).log(Level.SEVERE, null, ex);
+                   }
+      
+      finally{
+                       try {
+                           output.close();
+                       } catch (IOException ex) {
+                           Logger.getLogger(DisplayGUI.class.getName()).log(Level.SEVERE, null, ex);
+                       }
+      }
+                   
+               }
+            
+           }
+                
+           
+        }
+        
+         }
+    }
+
+ 
+
+
+
+
+ class candidate implements java.io.Serializable{
+        
+        private String C_name,C_category;
+        private String C_dob;
+        private int C_rollno;
+        private Integer C_air;
+        private int eligible;
+       String getC_name()
+       { return C_name;}
+       void setC_name(String name)
+       {C_name=name;}
+       String getC_category()
+       { return C_category;}
+       void setC_category(String name)
+       {C_category=name;}
+       Integer getC_air()
+       { return C_air;}
+       void setC_air(int C_air)
+       { this.C_air=C_air;}
+       int getC_rollno(){
+           return C_rollno;
+       }
+       void setC_rollno(int C_rollno){
+           this.C_rollno=C_rollno;
+       }
+       
+       String getC_DOB(){
+           return C_dob;
+       }
+       void setC_dob(String C_dob){
+           this.C_dob=C_dob;
+       }
+       int isEligible(){
+           return 1;
+       }
+ }
+       
+       
+       
+    
+
+
+
+    class preference implements java.io.Serializable {
+        
+       
+       String col_name,branch_name;
+        
+        
+    }
+
+  
+    class s_preference extends preference {
+        int prefno;
+        void setcol_name(String col_name)
+        {
+            this.col_name=col_name;
+        
+    }
+        void setbranch_name(String branch_name)
+        {
+            this.branch_name=branch_name;
+        
+    }
+        void setpref_no(int prefno){
+            this.prefno=prefno;
+        }
+        
+    }
+    //Had to inherit this as vacancy does not have prefno. Only student's preference needs prefno
+    
+    
+    
+    class student extends candidate {
+        
+        ArrayList <s_preference> s_pref=new ArrayList();
+        int alprefnum=0;
+        
+        student(){
+       
+        }
+        
+        
+        
+    }
+    
+    class vacancy extends preference{
+       private int total_seats,seats_filled;
+       
+    
+       
+        
+      public int getTotal(){
+          return total_seats;
+      }
+      
+      public void setTotal(int total_seats){
+          this.total_seats=total_seats;
+      }
+      
+      public int getSeatsFilled(){
+          return seats_filled;
+      }
+      
+      public void setSeatsFilled(int setSeatsFilled){
+          this.seats_filled=seats_filled;
+      }
+    }  
+      class round{
+      private int round_no;
+        vacancy[] v_list=new vacancy[15];
+        
+        round(){
+            int i;
+            for(i=0;i<15;i++)
+            {v_list[i].setTotal(20);
+            v_list[i].setSeatsFilled(0);
+            }
+            i=0;
+            while(i<15){
+                if(i<5){
+                v_list[i].branch_name="Electrical and Electronics Engineering";
+                }
+                else if(i<10){
+                   v_list[i].branch_name="Information Technology"; 
+                }
+                else if(i<15){
+                    v_list[i].branch_name="Mechanical Engineering"; 
+                }
+                i++;
+            }
+             i=0;
+             while(i<15){
+                if(i%5==0){
+                v_list[i].col_name="National Institute of Technology,Tiruchirapalli";
+                }
+                else if(i%5==1){
+                   v_list[i].col_name="National Institute of Technology,Warangal"; 
+                }
+                else if(i%5==2){
+                    v_list[i].col_name="National Institute of Technology,Surathkal"; 
+                }
+                else if(i%5==3){
+                    v_list[i].col_name="National Institute of Technology,Calicut"; 
+                }
+                else if(i%5==4){
+                    v_list[i].col_name="Motilal National Institute of Technology,Allahabad"; 
+                }
+                
+                i++;
+            }
+            
+            
+        }
+        
+    }
+    
+public class Miniproject {/**
+     * @param args the command line arguments
+     */  
+    
+ 
+    public static void main(String[] args) {
+        // TODO code application logic here
+        DisplayGUI gui=new DisplayGUI();
+       
+    }
+}
