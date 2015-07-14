@@ -1,0 +1,141 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package miniproject;
+
+/**
+ *
+ * @author snehasonu
+ */
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Miniproject1 implements Serializable {
+   /**
+     * @param args the command line arguments
+     * @throws java.io.IOException
+     */
+    candidate c=new candidate();
+    public static void main(String[] args) throws IOException {
+        
+        writeCandidate();
+}
+  public static void writeCandidate()throws IOException{
+             candidate c=new candidate();
+              ArrayList<candidate> cnd_arrlist=new ArrayList();
+             int i=0,rno;
+             Integer air;
+             String dob;
+             String fname,lname;
+             
+            Scanner scan=new Scanner(System.in);
+            while(i<5)
+            {
+                
+            System.out.println("enter the details of "+(i+1)+"student"+'\n');
+            System.out.println("Enter roll no:");
+            rno=scan.nextInt();
+            c.setC_rollno(rno);
+            System.out.println("Enter first name");
+            fname=scan.next();
+            System.out.println("Enter second name");
+            lname=scan.next();
+            c.setC_name(fname+" "+lname);
+            
+            System.out.println("AIR!!! :D");
+             air=scan.nextInt();
+            c.setC_air(air);
+            System.out.println("DOB?:");
+            dob=scan.next();
+            c.setC_dob(dob);
+            
+            cnd_arrlist.add(c);
+            
+            i++;
+            }
+      FileOutputStream file;
+
+            ObjectOutputStream output=null;
+
+             try
+
+             {
+
+                 file=new FileOutputStream("Candidate1.txt",true);
+
+                 output=new ObjectOutputStream(file);
+
+                 int j=0;
+
+                 while(j<cnd_arrlist.size()){
+
+                     output.writeObject(cnd_arrlist.get(j));
+
+                     j++;
+
+                 }
+
+                 }
+
+             catch (IOException e)
+
+             {
+
+                 System.out.println("File Write error");
+                    e.printStackTrace();
+
+
+             }
+
+            finally{
+
+                output.close();
+
+            }
+
+         }
+
+         public void readcandidate() throws IOException,ClassNotFoundException{
+             ArrayList<candidate> cand_array2 = new ArrayList();
+             FileInputStream file;
+             ObjectInputStream input = null;
+             try{
+             file=new FileInputStream("candidate2.txt");
+             input = new ObjectInputStream(file);
+             int i = 0;
+             candidate cn;
+
+        //Read the  Candidates from the File
+             while ((cn = (candidate)input.readObject()) != null) { //Note the type casting
+            cand_array2.add(cn);
+            i++;
+            }
+             }
+            catch(EOFException ex){
+            System.out.println("End Of File. Exiting Gracefully");
+            }
+            catch(IOException ex){
+            System.out.println("File Read Error");
+            ex.printStackTrace();
+            }
+            finally{
+                 input.close();
+             }
+            /* int i=0;
+             while(i<cand_array2.size()){
+                 System.out.println("Candidate Air:" + cand_array2.get(i).air);
+             }*/
+             
+         }
+             
+}
